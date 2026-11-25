@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AnticipateCart | Rezolve Labs Anticipatory Commerce</title>
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header class="app-header" role="banner">
+    <div class="brand-section">
+      <a href="/" class="brand-logo" aria-label="AnticipateCart Home">
+        🛒 <span class="gradient-text">AnticipateCart</span>
+      </a>
+      <span class="brand-badge">Rezolve Labs Challenge 1</span>
+      
+      <!-- Female Voice Active Indicator with Live Equalizer -->
+      <span class="female-voice-indicator" id="femaleVoiceBadge">
+        <span class="pulse-dot"></span> 👩 Voice: <strong>Natural Female</strong>
+      </span>
+      <div class="audio-equalizer">
+        <div class="eq-bar"></div>
+        <div class="eq-bar"></div>
+        <div class="eq-bar"></div>
+        <div class="eq-bar"></div>
+        <div class="eq-bar"></div>
+      </div>
+    </div>
+
+    <div class="user-controls">
+      <!-- Voice Selector Dropdown -->
+      <select id="voiceSelect" class="btn" style="padding:0.4rem 0.8rem; font-size:0.85rem;" aria-label="Select Female Assistant Voice">
+        <option value="">👩 Female Voice Loading...</option>
+      </select>
+
+      <!-- User Persona Toggle -->
+      <div class="persona-toggle" onclick="app.toggleUserRole()" role="button" tabindex="0" aria-label="Switch User Persona">
+        <span id="currentUserPill" style="font-weight:700; color:var(--accent-cyan);">✨ Cyber Standard Mode</span>
+        <span style="font-size:0.75rem; color:var(--text-muted);">(Toggle)</span>
+      </div>
+
+      <!-- Cart Button -->
+      <button class="btn btn-primary" onclick="app.openCartModal()" aria-label="View Shopping Cart">
+        🛒 Cart (<span id="cartCountBadge">0</span>)
+      </button>
+
+      <!-- Admin Demo Button -->
+      <button class="btn btn-accent" onclick="app.openAdminModal()" aria-label="Open Inventory Admin Panel">
+        ⚡ Restock Demo
+      </button>
+    </div>
+  </header>
+
+  <main class="app-main" role="main">
+
+    <!-- Accessibility Mode Controls Toolbar (WCAG AAA High-Contrast Lumina) -->
+    <section class="accessibility-bar" id="accessibilityBar" style="display:none;" role="region" aria-label="Accessibility Settings">
+      <div style="display:flex; align-items:center; gap:0.6rem;">
+        <span style="font-size:1.5rem;">♿</span>
+        <div>
+          <strong style="color:var(--accent-amber);">Lumina Voice-First Accessibility Mode Active</strong>
+          <div style="font-size:0.85rem; color:var(--text-muted);">Full speech recognition, female screen-reader synthesis, high contrast.</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+        <label for="speechRateSelect" style="font-weight:700;">Voice Speed:</label>
+        <select id="speechRateSelect" class="btn" style="padding:0.3rem 0.6rem; min-height:40px;">
+          <option value="0.8">0.8x (Slower)</option>
+          <option value="1.0" selected>1.0x (Normal)</option>
+          <option value="1.2">1.2x (Faster)</option>
+        </select>
+
+        <span style="font-weight:700; margin-left:0.5rem;">Font Sizing:</span>
+        <button class="btn" id="btnFontNormal" style="min-height:40px; padding:0.3rem 0.7rem;">A</button>
+        <button class="btn" id="btnFontLarge" style="min-height:40px; padding:0.3rem 0.7rem; font-size:1.1rem;">A+</button>
+        <button class="btn" id="btnFontXLarge" style="min-height:40px; padding:0.3rem 0.7rem; font-size:1.3rem;">A++</button>
+      </div>
+    </section>
+
+    <!-- Search Hero & Anticipatory Radar HUD -->
+    <div class="search-hero-container">
+      <section class="search-hero" role="region" aria-label="Anticipatory Search Bar">
+        <div class="search-input-wrapper">
+          <input 
+            type="text" 
+            id="searchInput" 
+            class="search-input" 
+            placeholder="Type or speak: 'Nike black running shoes size 9 under 5000'..."
+            aria-label="Anticipatory Search Query Input"
+            autocomplete="off"
+          >
+          
+          <!-- Female Voice Input Button -->
+          <button class="btn btn-voice" id="btnVoiceInput" aria-label="Toggle Female Voice Search">
+            🎙️ Voice Search
+          </button>
+
+          <!-- Image Scan Search Button -->
+          <label class="btn" style="cursor:pointer;" aria-label="Upload Product Photo for Visual Scan">
+            📷 Visual Scan
+            <input type="file" id="imageFileInput" accept="image/*" style="display:none;">
+          </label>
+        </div>
+
+        <!-- Quick Simulated Streaming Flows for Judges -->
+        <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.9rem;">
+          <span style="font-size:0.8rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Preset Flows:</span>
+          <button class="btn" style="padding:0.35rem 0.75rem; font-size:0.85rem; min-height:36px;" onclick="app.playSimulatedQuery('Pacevo navy casual sneakers size 9 UK for a wedding')">
+            ⚡ 1. Early Commit (Pacevo)
+          </button>
+          <button class="btn" style="padding:0.35rem 0.75rem; font-size:0.85rem; min-height:36px;" onclick="app.playSimulatedQuery('Kudova green runners size 6 wait I meant size 8 as a gift')">
+            🔄 2. Mid-Stream Retraction
+          </button>
+          <button class="btn" style="padding:0.35rem 0.75rem; font-size:0.85rem; min-height:36px;" onclick="app.playSimulatedQuery('mujhe Loomsy navy casual shoes nau number chahiye 4500 tak')">
+            🇮🇳 3. Hinglish Code-Mix
+          </button>
+          <button class="btn" style="padding:0.35rem 0.75rem; font-size:0.85rem; min-height:36px;" onclick="app.playSimulatedQuery('Northweft jacket in olive below 2000 rupees and make sure it\'s size XL please')">
+            ⏳ 4. Late Constraint
+          </button>
+          <button class="btn" style="padding:0.35rem 0.75rem; font-size:0.85rem; min-height:36px;" onclick="app.playSimulatedQuery('Tanaro black pair of jeans 32 waist for my brother')">
+            👖 5. Precision Sizing (Tanaro)
+          </button>
+        </div>
+
+        <!-- Spelling Banner -->
+        <div id="spellcheckBanner" class="spellcheck-banner" style="display:none;" role="alert"></div>
+
+        <!-- Mid-Stream Retraction Alert -->
+        <div id="correctionsBox" class="corrections-alert" style="display:none;" role="status" aria-live="polite"></div>
+
+        <!-- Token Streaming Box -->
+        <div style="font-size:0.8rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-top:0.5rem;">
+          Streaming Token Ingestion:
+        </div>
+        <div id="tokenStreamBox" class="token-stream-box" aria-live="polite">
+          <span style="color:var(--text-muted);">Incoming word tokens will stream here in real time...</span>
+        </div>
+
+        <!-- Real-Time Prediction Dashboard -->
+        <div class="prediction-dashboard" role="region" aria-label="Real-Time Attribute Hypotheses">
+          <div class="filter-badge-card">
+            <div class="badge-header"><span>Category</span></div>
+            <div class="badge-value" id="valCategory">—</div>
+            <div class="confidence-bar-bg"><div class="confidence-bar-fill" id="barCategory"></div></div>
+          </div>
+
+          <div class="filter-badge-card">
+            <div class="badge-header"><span>Brand</span></div>
+            <div class="badge-value" id="valBrand">—</div>
+            <div class="confidence-bar-bg"><div class="confidence-bar-fill" id="barBrand"></div></div>
+          </div>
+
+          <div class="filter-badge-card">
+            <div class="badge-header"><span>Colour</span></div>
+            <div class="badge-value" id="valColour">—</div>
+            <div class="confidence-bar-bg"><div class="confidence-bar-fill" id="barColour"></div></div>
+          </div>
+
+          <div class="filter-badge-card">
+            <div class="badge-header"><span>Size</span></div>
+            <div class="badge-value" id="valSize">—</div>
+            <div class="confidence-bar-bg"><div class="confidence-bar-fill" id="barSize"></div></div>
+          </div>
+
+          <div class="filter-badge-card">
+            <div class="badge-header"><span>Budget</span></div>
+            <div class="badge-value" id="valBudget">—</div>
+            <div class="confidence-bar-bg"><div class="confidence-bar-fill" id="barBudget"></div></div>
+          </div>
+
+          <div class="filter-badge-card" style="border-color:var(--accent-cyan);">
+            <div class="badge-header">
+              <span style="color:var(--accent-cyan);">Overall Confidence</span>
+              <span id="overallConfVal" style="color:var(--accent-cyan); font-weight:800;">0%</span>
+            </div>
+            <div class="badge-value" style="font-size:0.95rem; color:var(--text-muted);">Threshold: 85%</div>
+            <div class="confidence-bar-bg"><div class="confidence-bar-fill" id="overallConfBar" style="background:var(--accent-green);"></div></div>
+          </div>
+        </div>
+
+        <!-- Commit Decision Banner -->
+        <div id="commitBanner" class="commit-banner waiting" role="status" aria-live="assertive">
+          <div>
+            <div class="commit-status-text" id="commitStatusText">Ready to anticipate...</div>
+            <div style="font-size:0.9rem; color:var(--text-muted);" id="commitReasonText">Type or speak to start anticipatory session.</div>
+          </div>
+          <div style="font-size:0.85rem; text-align:right; color:var(--text-muted);">
+            <span>Engine: <strong style="color:var(--text-main);">Rezolve Labs Semantic / Local Fallback</strong></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Anticipatory Radar HUD -->
+      <aside class="radar-hud-card" aria-label="Anticipation Radar HUD">
+        <div>
+          <div style="font-size:0.8rem; font-weight:800; text-transform:uppercase; color:var(--accent-cyan); letter-spacing:0.8px; margin-bottom:0.75rem;">
+            🛰️ Cognition Radar
+          </div>
+          <div class="radar-circle-wrapper">
+            <div class="radar-ring"></div>
+            <div class="radar-ring inner"></div>
+            <div class="radar-sweep-arm"></div>
+            <span style="font-size:1.6rem; z-index:2;">🧠</span>
+          </div>
+        </div>
+
+        <div class="radar-stats-text" style="margin-top:1rem;">
+          <div>Tokens Seen: <strong id="radarTokenCount" style="color:var(--text-main);">0</strong></div>
+          <div>Confidence: <strong id="radarConfidence" style="color:var(--accent-cyan);">0%</strong></div>
+          <div>Earliness Lead: <strong id="radarWordsSaved" style="color:var(--accent-green);">0 words</strong></div>
+          <div>Engine: <strong style="color:var(--accent-purple);">Pre-Commit Verifier</strong></div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Product Catalogue Section -->
+    <section role="region" aria-label="Matching Catalogue Products">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+        <h2 style="font-size:1.6rem; font-weight:800; letter-spacing:-0.5px;">Matching Catalogue Products</h2>
+        <span style="font-size:0.9rem; color:var(--text-muted);">1,000 Verified SKUs with HD Images</span>
+      </div>
+
+      <div id="productsGrid" class="products-grid">
+        <!-- Products populated dynamically with photos -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Cart Modal -->
+  <div id="cartModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cartModalTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="cartModalTitle">🛒 Shopping Cart</h2>
+        <button class="btn" style="min-height:36px; padding:0.3rem 0.6rem;" onclick="app.closeCartModal()" aria-label="Close cart">✕</button>
+      </div>
+      <div id="cartItemsContainer" style="margin-bottom:1.25rem;"></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:1rem;">
+        <span style="font-size:1.25rem; font-weight:700;">Total Payable:</span>
+        <span id="cartTotalAmount" style="font-size:1.5rem; font-weight:800; color:var(--accent-green);">₹0</span>
+      </div>
+      <div style="display:flex; gap:0.75rem; margin-top:1.25rem;">
+        <button class="btn" style="flex:1;" onclick="app.closeCartModal()">Continue Shopping</button>
+        <button class="btn btn-primary" style="flex:1;" onclick="app.placeOrder()">Place Order Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Success Modal -->
+  <div id="orderSuccessModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="orderSuccessTitle">
+    <div class="modal-content" style="text-align:center;">
+      <div style="font-size:3.5rem; margin-bottom:0.5rem;">🎉</div>
+      <h2 id="orderSuccessTitle" style="color:var(--accent-green); margin-bottom:0.5rem;">Order Confirmed!</h2>
+      <p style="color:var(--text-muted); margin-bottom:1rem;">Thank you for shopping with AnticipateCart.</p>
+      <div style="background:rgba(7, 9, 19, 0.7); padding:1rem; border-radius:10px; border:1px solid var(--border-color); margin-bottom:1.25rem;">
+        <div>Order Reference: <strong id="orderIdSpan" style="color:var(--accent-cyan);">—</strong></div>
+        <div style="margin-top:0.4rem;">Total Paid: <strong id="orderAmountSpan" style="color:var(--accent-green);">—</strong></div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;" onclick="app.closeOrderSuccessModal()">Done</button>
+    </div>
+  </div>
+
+  <!-- Admin Restock Inventory Modal -->
+  <div id="adminModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="adminModalTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="adminModalTitle">⚡ Inventory Controller & Live Restock Alert</h2>
+        <button class="btn" style="min-height:36px; padding:0.3rem 0.6rem;" onclick="app.closeAdminModal()" aria-label="Close admin modal">✕</button>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1rem;">
+        Click <strong>Restock</strong> on any out-of-stock product. It will simulate inventory arrival and instantly trigger in-app alerts and female voice announcements to all subscribed users!
+      </p>
+      <div id="adminOosContainer"></div>
+    </div>
+  </div>
+
+  <!-- Floating Voice Speaking Indicator -->
+  <div id="voiceSpeakingIndicator" class="voice-speaking-indicator" aria-hidden="true">
+    <div class="sound-wave"></div>
+    <span id="voiceSpeakingText">Speaking...</span>
+  </div>
+
+  <!-- Frontend JS Engine -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
